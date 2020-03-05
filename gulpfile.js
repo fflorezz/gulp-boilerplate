@@ -1,30 +1,3 @@
-// const sass = require("gulp-sass");
-// const gulp = require("gulp");
-// const browserSync = require("browser-sync").create();
-// sass.compiler = require("node-sass");
-
-// function style() {
-// 	return gulp
-// 		.src("./sass/**/*.scss")
-// 		.pipe(sass().on("error", sass.logError))
-// 		.pipe(gulp.dest("./css"))
-// 		.pipe(browserSync.stream());
-// }
-
-// function watch() {
-// 	browserSync.init({
-// 		server: {
-// 			baseDir: "./"
-// 		}
-// 	});
-// 	gulp.watch("./sass/**/*.scss", style);
-// 	gulp.watch("./*.html").on("change", browserSync.reload);
-// 	gulp.watch("./js/**/*.js").on("change", browserSync.reload);
-// }
-
-// exports.style = style;
-// exports.watch = watch;
-
 //************* */ Initialize modules*****************
 // Importing specific gulp API functions lets us write them below as series() instead of gulp.series()
 const { src, dest, watch, series, parallel } = require("gulp");
@@ -53,7 +26,7 @@ function scssTask() {
 		.pipe(sass()) // compile SCSS to CSS
 		.pipe(postcss([ autoprefixer(), cssnano() ])) // PostCSS plugins
 		.pipe(sourcemaps.write(".")) // write sourcemaps file in current directory
-		.pipe(dest("dist")); // put final CSS in dist folder
+		.pipe(dest("dist/css")); // put final CSS in dist folder
 }
 
 // JS task: concatenates and uglifies JS files to script.js
@@ -66,10 +39,11 @@ function jsTask() {
 		.pipe(concat("index-min.js"))
 		.pipe(uglify())
 		.pipe(sourcemaps.write()) // write sourcemaps file in current directory
-		.pipe(dest("dist"));
+		.pipe(dest("dist/js"));
 }
 
 // Cachebust
+// caches the css and js sources
 function cacheBustTask() {
 	var cbString = new Date().getTime();
 	return src([ files.htmlPath ]).pipe(replace(/cb=\d+/g, "cb=" + cbString)).pipe(dest("./dist"));
